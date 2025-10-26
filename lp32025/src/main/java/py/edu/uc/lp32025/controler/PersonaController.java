@@ -1,4 +1,4 @@
-package py.edu.uc.lp32025.controller;
+package py.edu.uc.lp32025.controler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
