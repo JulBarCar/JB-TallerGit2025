@@ -18,19 +18,29 @@ public class EmpleadoPorHora extends Persona {
     public EmpleadoPorHora() {
     }
 
+    // --- CUMPLE: Tarifa × horas + bonus 50% por horas extra (>40) ---
     @Override
     public BigDecimal calcularSalario() {
-        return null;
+        BigDecimal salarioBase = tarifaPorHora.multiply(BigDecimal.valueOf(horasTrabajadas));
+        int horasExtra = Math.max(horasTrabajadas - 40, 0);
+        BigDecimal bonus = tarifaPorHora.multiply(new BigDecimal("0.50")).multiply(BigDecimal.valueOf(horasExtra));
+        return salarioBase.add(bonus);
     }
 
+    // --- CUMPLE: 2% del salario total ---
     @Override
-    protected BigDecimal calcularDeducciones() {
-        return null;
+    public BigDecimal calcularDeducciones() {
+        return calcularSalario().multiply(new BigDecimal("0.02"));
     }
 
+    // --- CUMPLE: Tarifa > 0, horas entre 1 y 80 ---
     @Override
     public boolean validarDatosEspecificos() {
-        return false;
+        return tarifaPorHora != null
+                && tarifaPorHora.compareTo(BigDecimal.ZERO) > 0
+                && horasTrabajadas != null
+                && horasTrabajadas >= 1
+                && horasTrabajadas <= 80;
     }
 
     public EmpleadoPorHora(String nombre, String apellido, LocalDate fechaNacimiento, String numeroDocumento,

@@ -25,12 +25,13 @@ public class EmpleadoTiempoCompleto extends Persona {
         this.departamento = departamento;
     }
 
+    // --- CUMPLE: Retorna el salario mensual (sin descuento) ---
     @Override
     public BigDecimal calcularSalario() {
-        // Aplica un descuento del 9% al salario mensual
-        return salarioMensual.multiply(new BigDecimal("0.91"));
+        return salarioMensual;
     }
 
+    // --- CUMPLE: Extiende información base con salario y departamento ---
     @Override
     public String obtenerInformacionCompleta() {
         StringBuilder info = new StringBuilder(super.obtenerInformacionCompleta());
@@ -39,19 +40,26 @@ public class EmpleadoTiempoCompleto extends Persona {
         return info.toString();
     }
 
+    // --- CUMPLE: 5% si es "IT", 3% para otros ---
     @Override
     public BigDecimal calcularDeducciones() {
-        // Deducción del 5% del salario mensual
-        return salarioMensual.multiply(new BigDecimal("0.05"));
+        if (departamento != null && "IT".equalsIgnoreCase(departamento.trim())) {
+            return salarioMensual.multiply(new BigDecimal("0.05"));
+        } else {
+            return salarioMensual.multiply(new BigDecimal("0.03"));
+        }
     }
 
+    // --- CUMPLE: salario > 0 y departamento no vacío ---
     @Override
     public boolean validarDatosEspecificos() {
-        return salarioMensual != null &&
-                salarioMensual.compareTo(new BigDecimal("2899048")) >= 0 &&
-                departamento != null && !departamento.trim().isEmpty();
+        return salarioMensual != null
+                && salarioMensual.compareTo(BigDecimal.ZERO) > 0
+                && departamento != null
+                && !departamento.trim().isEmpty();
     }
 
+    // Getters y Setters
     public BigDecimal getSalarioMensual() {
         return salarioMensual;
     }
