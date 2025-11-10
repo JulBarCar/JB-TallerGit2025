@@ -1,157 +1,268 @@
-# Sistema de Gestión de Empleados y Contratistas
+```markdown
+# Sistema de Gestión de Empleados - Estado intemedio entre entregas
 
-Este proyecto es una aplicación Spring Boot para la gestión de personas (empleados a tiempo completo, empleados por hora y contratistas), con funcionalidades para calcular salarios, impuestos, reportes y operaciones CRUD. Utiliza herencia polimórfica para manejar diferentes tipos de empleados.
+![Java](https://img.shields.io/badge/Java-17-blue)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-green)
+![JPA/Hibernate](https://img.shields.io/badge/JPA/Hibernate-6.2-orange)
+![Lombok](https://img.shields.io/badge/Lombok-1.18.30-yellow)
+![SLF4J](https://img.shields.io/badge/SLF4J-2.0.9-lightgrey)
 
-## Instrucciones de ejecución
+---
 
-1. **Requisitos previos:**
-   - Java 17 o superior.
-   - Maven 3.6+ (para compilar y ejecutar).
-   - Base de datos: La aplicación usa Spring Data JPA. Por defecto, puedes usar H2 (en memoria) para pruebas. Para producción, configura PostgreSQL o MySQL en `application.properties`.
-     Ejemplo de configuración en `src/main/resources/application.properties`:
-     ```
-     spring.datasource.url=jdbc:h2:mem:testdb
-     spring.datasource.driverClassName=org.h2.Driver
-     spring.datasource.username=sa
-     spring.datasource.password=
-     spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-     spring.h2.console.enabled=true
-     ```
+## Descripción General
 
-2. **Compilación y ejecución:**
-   - Clona el repositorio: `git clone <url-repositorio>`.
-   - Navega al directorio del proyecto: `cd lp32025`.
-   - Compila el proyecto: `mvn clean install`.
-   - Ejecuta la aplicación: `mvn spring-boot:run`.
-   - Alternativa: Genera el JAR ejecutable con `mvn package` y ejecútalo con `java -jar target/lp32025-0.0.1-SNAPSHOT.jar`.
-   - La aplicación se inicia en `http://localhost:8080`.
+Este proyecto es una **aplicación Spring Boot RESTful** que implementa un sistema de gestión de empleados con **herencia JPA**, **polimorfismo**, **interfaces funcionales**, **validaciones**, **manejo de excepciones** y **batch processing**. Está diseñado para demostrar conceptos avanzados de Programación Orientada a Objetos en un contexto real.
 
-3. **Pruebas:**
-   - Usa herramientas como Postman o cURL para probar los endpoints.
-   - Accede a la consola H2 (si está habilitada): `http://localhost:8080/h2-console`.
+---
 
-## Descripción de la arquitectura implementada
+## Arquitectura del Proyecto
 
-La arquitectura sigue el patrón MVC (Model-View-Controller) de Spring Boot, con énfasis en principios OOP como herencia y polimorfismo. Se divide en capas:
+```
+src/main/java/py/edu/uc/lp32025/
+├── domain/          → Entidades JPA y lógica de negocio
+├── dto/             → Objetos de transferencia (respuestas API)
+├── controler/       → Controladores REST (¡atención: typo en nombre!)
+├── service/         → Lógica de negocio y repositorios
+├── repository/      → Interfaces JPA
+├── exception/       → Excepciones personalizadas
+├── interfaces/      → Interfaces funcionales
+├── demo/            → Demo de permisos y vacaciones
+└── utils/           → (Pendiente: NominaUtils)
+```
 
-- **Capa de Dominio (Model):**
-  - Clase abstracta `Persona` como base para herencia (estrategia JOINED en JPA).
-  - Subclases: `EmpleadoTiempoCompleto`, `EmpleadoPorHora`, `Contratista`.
-  - Métodos polimórficos: `calcularSalario()`, `calcularImpuestos()`, `validarDatosEspecificos()`, `obtenerInformacionCompleta()`.
-  - Validaciones específicas por tipo (ej: horas trabajadas para empleados por hora).
+---
 
-- **Capa de Persistencia (Repository):**
-  - Interfaces JpaRepository para cada subclase: `EmpleadoTiempoCompletoRepository`, `EmpleadoPorHorasRepository`, `ContratistaRepository`, `PersonaRepository`.
-  - Consultas personalizadas: por departamento, horas trabajadas, contratos vigentes, nombre (insensible a mayúsculas).
+## Funcionalidades Actuales
 
-- **Capa de Negocio (Service):**
-  - Servicios por tipo: `EmpleadoTiempoCompletoService`, `EmpleadoPorHorasService`, `ContratistaService`, `PersonaService`.
-  - Lógica de validación, transacciones (@Transactional), batch processing (guardado en lotes de 100 para eficiencia).
-  - Métodos globales en `PersonaService`: `calcularNominaTotal()` (suma salarios por tipo), `generarReporteCompleto()` (lista DTOs con info polimórfica), búsqueda por nombre.
+| Funcionalidad | Estado | Detalle |
+|--------------|--------|-------|
+| CRUD por tipo de empleado | Completed | Tiempo completo, por hora, contratista |
+| Cálculo de salarios (polimorfismo) | Completed | Cada tipo tiene su fórmula |
+| Impuestos (10% - deducciones) | Completed | Método común en `Persona` |
+| Validaciones específicas | Completed | `validarDatosEspecificos()` por tipo |
+| Vacaciones y permisos | Completed | Según normativa paraguaya |
+| Batch con chunks de 100 | Completed | Evita `OutOfMemory` |
+| Reporte de nómina total | Completed | `/api/personas/nomina` |
+| Reporte completo | Completed | `/api/personas/reporte` |
+| Búsqueda por nombre | Completed | `/api/personas?nombre=...` |
+| GPS + Avatar (`Mapeable`) | Completed | `Persona`, `Vehiculo`, `Edificio` |
 
-- **Capa de Presentación (Controller):**
-  - Controladores REST: `IndexController` (saludo), `PersonaController` (global), y por tipo (`EmpleadoTiempoCompletoController`, etc.).
-  - Endpoints para CRUD, cálculos de impuestos (DTO `ImpuestoResponseDTO`), reportes.
-  - Manejo de errores: `GlobalExceptionHandler` para excepciones como IllegalArgumentException y EntityNotFoundException, usando `ErrorResponseDTO`.
+---
 
-- **DTOs:**
-  - Para respuestas: `GreetingDTO`, `ImpuestoResponseDTO`, `ReporteEmpleadoDto`, `ErrorResponseDTO`.
-  - Herencia en DTOs: `AbstractResponseDTO` y `BaseResponseDTO`.
+## Jerarquía de Clases (Dominio)
 
-- **Otras características:**
-  - Logging con SLF4J.
-  - Excepciones personalizadas y validaciones en servicios.
-  - Polimorfismo para cálculos unificados (salarios, impuestos, validaciones).
-  - Batch processing para inserciones masivas.
-  - Redirección en raíz (`/`) a `/HolaMundo`.
+```
+Persona (Abstract, Mapeable)
+└── Empleado (Abstract, Permisionable)
+    ├── EmpleadoTiempoCompleto
+    ├── EmpleadoPorHora
+    └── Contratista
+```
 
-## Ejemplos de comandos cURL
+- **Herencia JPA**: `InheritanceType.JOINED`
+- **Polimorfismo**: `calcularSalario()`, `calcularDeducciones()`, `calcularImpuestos()`
+- **Validación**: `validarDatosEspecificos()` por tipo
 
-Asume que la aplicación corre en `http://localhost:8080`. Usa JSON para cuerpos de request.
+---
 
-1. **Saludo básico:**
-   ```
-   curl -X GET "http://localhost:8080/HolaMundo?name=Juan"
-   ```
-   Respuesta esperada: `{"status":200,"error":null,"userError":null,"message":"¡Hola, Juan!"}`
+## Cálculo de Salarios
 
-2. **Crear un empleado a tiempo completo (POST):**
-   ```
-   curl -X POST "http://localhost:8080/api/empleados-tiempo-completo" \
-   -H "Content-Type: application/json" \
-   -d '{
-     "nombre": "Juan",
-     "apellido": "Perez",
-     "fechaNacimiento": "1990-01-01",
-     "numeroDocumento": "1234567",
-     "salarioMensual": 5000000,
-     "departamento": "IT"
-   }'
-   ```
+| Tipo | Fórmula |
+|------|--------|
+| **Tiempo Completo** | `salarioMensual + bonoAnual` |
+| **Por Hora** | `(tarifa × horas) + (50% extra si >40h)` |
+| **Contratista** | `montoPorProyecto × proyectosCompletados` |
 
-3. **Obtener todos los empleados a tiempo completo (GET):**
-   ```
-   curl -X GET "http://localhost:8080/api/empleados-tiempo-completo"
-   ```
+---
 
-4. **Calcular impuestos para un empleado (GET):**
-   ```
-   curl -X GET "http://localhost:8080/api/empleados-tiempo-completo/1/impuestos"
-   ```
+## Vacaciones y Permisos (`Permisionable`)
 
-5. **Actualizar un contratista (PUT):**
-   ```
-   curl -X PUT "http://localhost:8080/api/contratistas/1" \
-   -H "Content-Type: application/json" \
-   -d '{
-     "nombre": "Ana",
-     "apellido": "Lopez",
-     "fechaNacimiento": "1985-05-05",
-     "numeroDocumento": "7654321",
-     "montoPorProyecto": 10000000,
-     "proyectosCompletados": 3,
-     "fechaFinContrato": "2026-12-31"
-   }'
-   ```
+```java
+int getDiasVacacionesDisponibles()
+```
+| Antigüedad | Días |
+|-----------|------|
+| 0 años | 0 |
+| 1-4 años | 12 |
+| 5-9 años | 18 |
+| ≥10 años | 30 |
 
-6. **Eliminar un empleado por hora (DELETE):**
-   ```
-   curl -X DELETE "http://localhost:8080/api/empleados-por-hora/1"
-   ```
+```java
+boolean solicitarPermiso(LocalDate fecha, String motivo)
+```
+| Motivo | Días permitidos |
+|--------|-----------------|
+| MATRIMONIO | 3 |
+| NACIMIENTO_HIJO | 2 |
+| FALLECIMIENTO_FAMILIAR | 2 |
 
-7. **Reporte completo global (GET):**
-   ```
-   curl -X GET "http://localhost:8080/api/personas/reporte"
-   ```
+---
 
-8. **Nómina total por tipo (GET):**
-   ```
-   curl -X GET "http://localhost:8080/api/personas/nomina"
-   ```
+## Endpoints REST
 
-9. **Buscar personas por nombre (GET):**
-   ```
-   curl -X GET "http://localhost:8080/api/personas?nombre=Juan"
-   ```
+### Inicio
+```
+GET /
+→ Redirige a /HolaMundo
+GET /HolaMundo?name=Juan
+→ {"status":200,"message":"¡Hola, Juan!"}
+```
 
-10. **Crear en batch (POST, ejemplo para empleados por hora):**
-    ```
-    curl -X POST "http://localhost:8080/api/empleados-por-hora/batch" \
-    -H "Content-Type: application/json" \
-    -d '[
-      {
-        "nombre": "Pedro",
-        "apellido": "Gomez",
-        "numeroDocumento": "1111111",
-        "tarifaPorHora": 50000,
-        "horasTrabajadas": 50
-      },
-      {
-        "nombre": "Maria",
-        "apellido": "Rodriguez",
-        "numeroDocumento": "2222222",
-        "tarifaPorHora": 60000,
-        "horasTrabajadas": 30
-      }
-    ]'
-    ```
+### Personas (Global)
+```
+GET    /api/personas
+GET    /api/personas/{id}
+POST   /api/personas
+PUT    /api/personas/{id}
+DELETE /api/personas/{id}
+
+GET /api/personas/nomina
+→ {"EmpleadoTiempoCompleto": 15000000, ...}
+
+GET /api/personas/reporte
+→ Lista de ReporteEmpleadoDto
+
+GET /api/personas?nombre=Carlos
+→ Filtra por nombre (case-insensitive)
+```
+
+### Empleados por Tipo
+
+#### Tiempo Completo
+```
+GET    /api/empleados-tiempo-completo
+GET    /api/empleados-tiempo-completo/{id}
+GET    /api/empleados-tiempo-completo/documento/{doc}
+GET    /api/empleados-tiempo-completo/{id}/impuestos
+POST   /api/empleados-tiempo-completo
+POST   /api/empleados-tiempo-completo/batch
+PUT    /api/empleados-tiempo-completo/{id}
+DELETE /api/empleados-tiempo-completo/{id}
+```
+
+#### Por Hora
+```
+GET    /api/empleados-por-hora
+GET    /api/empleados-por-hora/{id}
+GET    /api/empleados-por-hora/horas/{horas}
+GET    /api/empleados-por-hora/{id}/impuestos
+POST   /api/empleados-por-hora
+POST   /api/empleados-por-hora/batch
+PUT    /api/empleados-por-hora/{id}
+DELETE /api/empleados-por-hora/{id}
+```
+
+#### Contratistas
+```
+GET    /api/contratistas
+GET    /api/contratistas/{id}
+GET    /api/contratistas/contrato-vigente
+GET    /api/contratistas/{id}/impuestos
+POST   /api/contratistas
+POST   /api/contratistas/batch
+PUT    /api/contratistas/{id}
+DELETE /api/contratistas/{id}
+```
+
+---
+
+## Manejo de Errores
+
+- `GlobalExceptionHandler` captura:
+  - `IllegalArgumentException` → 400
+  - `EntityNotFoundException` → 404
+- Respuesta: `ErrorResponseDTO`
+
+```json
+{
+  "status": 400,
+  "error": "Invalid input",
+  "userError": "El nombre no puede estar vacío."
+}
+```
+
+---
+
+## Demo de Permisos
+
+Al iniciar la app:
+```java
+PermisoDemoApplication → CommandLineRunner
+```
+Muestra:
+- Vacaciones aprobadas/denegadas
+- Permisos por motivo
+- Casos de error (excepciones)
+
+---
+
+## Batch Processing
+
+- `guardarEmpleadosEnBatch(List<T>)`
+- Valida **todos** antes de guardar
+- Procesa en **chunks de 100**
+- Usa `saveAll()` + `flush()`
+
+---
+
+## Mapeable (GPS + Avatar)
+
+```java
+interface Mapeable {
+    PosicionGPS ubicarElemento();
+    Avatar obtenerAvatar();
+}
+```
+
+Implementado en:
+- `Persona`
+- `Vehiculo`
+- `Edificio`
+
+---
+
+## Dependencias (pom.xml)
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <scope>runtime</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+    </dependency>
+</dependencies>
+```
+
+---
+
+## Ejecución
+
+```bash
+./mvnw spring-boot:run
+```
+
+Accede a:
+```
+http://localhost:8080/HolaMundo
+```
+
+H2 Console:
+```
+http://localhost:8080/h2-console
+JDBC URL: jdbc:h2:mem:testdb
+```
+
+
+```

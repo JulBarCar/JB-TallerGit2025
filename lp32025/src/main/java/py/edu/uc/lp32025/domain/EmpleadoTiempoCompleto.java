@@ -3,76 +3,66 @@ package py.edu.uc.lp32025.domain;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "empleado_tiempo_completo")
 @PrimaryKeyJoinColumn(name = "persona_id")
-public class EmpleadoTiempoCompleto extends Persona {
+@Getter
+@Setter
+@Slf4j
+public class EmpleadoTiempoCompleto extends Empleado {
 
     @Column(name = "salario_mensual", nullable = false)
     private BigDecimal salarioMensual;
 
-    @Column(nullable = false)
+    @Column(name = "bono_anual", nullable = false)
+    private BigDecimal bonoAnual;
+
+    @Column(name = "departamento")
     private String departamento;
 
     public EmpleadoTiempoCompleto() {
     }
 
-    public EmpleadoTiempoCompleto(String nombre, String apellido, LocalDate fechaNacimiento, String numeroDocumento,
-                                  BigDecimal salarioMensual, String departamento) {
-        super(nombre, apellido, fechaNacimiento, numeroDocumento);
+    public EmpleadoTiempoCompleto(String nombre, String apellido, LocalDate fechaNacimiento,
+                                  String numeroDocumento, BigDecimal salarioMensual,
+                                  BigDecimal bonoAnual, LocalDate fechaIngreso) {
+        super(nombre, apellido, fechaNacimiento, numeroDocumento, fechaIngreso);
         this.salarioMensual = salarioMensual;
+        this.bonoAnual = bonoAnual;
+    }
+
+    public EmpleadoTiempoCompleto(String nombre, String apellido, LocalDate fechaNacimiento,
+                                  String numeroDocumento, BigDecimal salarioMensual,
+                                  BigDecimal bonoAnual, LocalDate fechaIngreso, String departamento) {
+        super(nombre, apellido, fechaNacimiento, numeroDocumento, fechaIngreso);
+        this.salarioMensual = salarioMensual;
+        this.bonoAnual = bonoAnual;
         this.departamento = departamento;
     }
 
-    // --- CUMPLE: Retorna el salario mensual (sin descuento) ---
     @Override
     public BigDecimal calcularSalario() {
-        return salarioMensual;
+        log.debug("Calculando salario para {} {} (tiempo completo, depto: {})", getNombre(), getApellido(), departamento);
+        return salarioMensual.add(bonoAnual);
     }
 
-    // --- CUMPLE: Extiende información base con salario y departamento ---
-    @Override
-    public String obtenerInformacionCompleta() {
-        StringBuilder info = new StringBuilder(super.obtenerInformacionCompleta());
-        info.append(", Salario Mensual: ").append(salarioMensual);
-        info.append(", Departamento: ").append(departamento);
-        return info.toString();
-    }
-
-    // --- CUMPLE: 5% si es "IT", 3% para otros ---
     @Override
     public BigDecimal calcularDeducciones() {
-        if (departamento != null && "IT".equalsIgnoreCase(departamento.trim())) {
-            return salarioMensual.multiply(new BigDecimal("0.05"));
-        } else {
-            return salarioMensual.multiply(new BigDecimal("0.03"));
-        }
+        BigDecimal salario = calcularSalario();
+        log.debug("Deducciones 5% sobre salario {} = {}", salario, salario.multiply(new BigDecimal("0.05")));
+        return salario.multiply(new BigDecimal("0.05"));
     }
 
-    // --- CUMPLE: salario > 0 y departamento no vacío ---
     @Override
     public boolean validarDatosEspecificos() {
-        return salarioMensual != null
-                && salarioMensual.compareTo(BigDecimal.ZERO) > 0
-                && departamento != null
-                && !departamento.trim().isEmpty();
-    }
-
-    // Getters y Setters
-    public BigDecimal getSalarioMensual() {
-        return salarioMensual;
-    }
-
-    public void setSalarioMensual(BigDecimal salarioMensual) {
-        this.salarioMensual = salarioMensual;
-    }
-
-    public String getDepartamento() {
-        return departamento;
-    }
-
-    public void setDepartamento(String departamento) {
-        this.departamento = departamento;
+        boolean valido = salarioMensual != null && salarioMensual.compareTo(BigDecimal.ZERO) > 0
+                && bonoAnual != null && bonoAnual.compareTo(BigDecimal.ZERO) >= 0
+                && getFechaIngreso() != null && !getFechaIngreso().isAfter(LocalDate.now());
+        log.debug("Validación específica (tiempo completo): {}", valido ? "OK" : "FALLIDA");
+        return valido;
     }
 }
