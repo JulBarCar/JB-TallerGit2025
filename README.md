@@ -227,19 +227,6 @@ GET /api/nomina/gerente/{id}?periodo=2025-11-01
 
 ---
 
-## Demo de Permisos
-
-Al iniciar la app:
-```java
-PermisoDemoApplication → CommandLineRunner
-```
-Muestra:
-- Vacaciones aprobadas/denegadas
-- Permisos por motivo
-- Casos de error (excepciones)
-
-Adicional: `IntegracionDemoApplication` prueba todo el sistema, incluyendo batch, reportes y excepciones.
-
 ---
 
 ## Batch Processing
