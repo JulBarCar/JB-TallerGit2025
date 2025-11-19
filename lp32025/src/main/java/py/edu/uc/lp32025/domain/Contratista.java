@@ -1,12 +1,18 @@
 package py.edu.uc.lp32025.domain;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import py.edu.uc.lp32025.exception.PermisoDenegadoException;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+/**
+ * Representa a un contratista externo.
+ * Hereda de {@link Empleado} y define cálculo de salario por proyecto.
+ */
 @Entity
 @Table(name = "contratista")
 @PrimaryKeyJoinColumn(name = "persona_id")
@@ -15,33 +21,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Contratista extends Empleado {
 
-    @Column(name = "monto_por_proyecto", nullable = false)
+    @Column(name = "monto_por_proyecto", nullable = false, precision = 15, scale = 2)
     private BigDecimal montoPorProyecto;
 
     @Column(name = "proyectos_completados", nullable = false)
-    private Integer proyectosCompletados;
+    private int proyectosCompletados;
 
-    @Column(name = "fecha_fin_contrato", nullable = false)
+    @Column(name = "fecha_fin_contrato")
     private LocalDate fechaFinContrato;
 
-    @Column(name = "departamento")
+    @Column(name = "departamento", length = 100)
     private String departamento;
 
     public Contratista() {
+        super();
     }
 
-    public Contratista(String nombre, String apellido, LocalDate fechaNacimiento, String numeroDocumento,
-                       BigDecimal montoPorProyecto, Integer proyectosCompletados,
-                       LocalDate fechaFinContrato, LocalDate fechaIngreso) {
-        super(nombre, apellido, fechaNacimiento, numeroDocumento, fechaIngreso);
-        this.montoPorProyecto = montoPorProyecto;
-        this.proyectosCompletados = proyectosCompletados;
-        this.fechaFinContrato = fechaFinContrato;
-    }
-
-    public Contratista(String nombre, String apellido, LocalDate fechaNacimiento, String numeroDocumento,
-                       BigDecimal montoPorProyecto, Integer proyectosCompletados,
-                       LocalDate fechaFinContrato, LocalDate fechaIngreso, String departamento) {
+    public Contratista(String nombre, String apellido, LocalDate fechaNacimiento,
+                       String numeroDocumento, BigDecimal montoPorProyecto,
+                       int proyectosCompletados, LocalDate fechaFinContrato,
+                       LocalDate fechaIngreso, String departamento) {
         super(nombre, apellido, fechaNacimiento, numeroDocumento, fechaIngreso);
         this.montoPorProyecto = montoPorProyecto;
         this.proyectosCompletados = proyectosCompletados;
@@ -51,40 +50,107 @@ public class Contratista extends Empleado {
 
     @Override
     public BigDecimal calcularSalario() {
-        BigDecimal total = montoPorProyecto.multiply(BigDecimal.valueOf(proyectosCompletados));
-        log.debug("Salario contratista {} {} (depto: {}): {} × {} = {}", getNombre(), getApellido(), departamento, montoPorProyecto, proyectosCompletados, total);
-        return total;
+        BigDecimal salario = montoPorProyecto.multiply(new BigDecimal(proyectosCompletados));
+        log.debug("Salario calculado para contratista {} {}: {}", getNombre(), getApellido(), salario);
+        return salario;
     }
 
     @Override
     public BigDecimal calcularDeducciones() {
-        log.debug("Deducciones para contratista {} {}: 0%", getNombre(), getApellido());
-        return BigDecimal.ZERO;
+        BigDecimal salario = calcularSalario();
+        BigDecimal deduccion = salario.multiply(new BigDecimal("0.08")); // 8% deducción
+        log.debug("Deducciones 8% para contratista {} {}: {}", getNombre(), getApellido(), deduccion);
+        return deduccion;
     }
 
     @Override
     public boolean validarDatosEspecificos() {
-        boolean valido = montoPorProyecto != null && montoPorProyecto.compareTo(BigDecimal.ZERO) > 0
-                && proyectosCompletados != null && proyectosCompletados >= 0
-                && fechaFinContrato != null && fechaFinContrato.isAfter(LocalDate.now())
-                && getFechaIngreso() != null && !getFechaIngreso().isAfter(LocalDate.now());
-        log.debug("Validación específica (contratista): {}", valido ? "OK" : "FALLIDA");
-        return valido;
+        boolean montoValido = montoPorProyecto != null && montoPorProyecto.compareTo(BigDecimal.ZERO) > 0;
+        boolean proyectosValido = proyectosCompletados >= 0;
+        boolean fechaValida = fechaFinContrato != null && !fechaFinContrato.isBefore(getFechaIngreso());
+        boolean departamentoValido = departamento != null && !departamento.trim().isEmpty();
+
+        log.debug("Validación específica (contratista): monto > 0 → {}, proyectos >= 0 → {}, fecha fin >= ingreso → {}, departamento no vacío → {}",
+                montoValido, proyectosValido, fechaValida, departamentoValido);
+        return montoValido && proyectosValido && fechaValida && departamentoValido;
+    }
+
+    // ====================== Permisionable ======================
+
+    @Override
+    protected boolean solicitarVacacionesInterno(LocalDate fechaInicio, LocalDate fechaFin)
+            throws PermisoDenegadoException {
+        if (fechaInicio == null || fechaFin == null || fechaInicio.isAfter(fechaFin)) {
+            throw new PermisoDenegadoException("Fechas inválidas", fechaInicio,
+                    "La fecha de inicio debe ser anterior o igual a la fecha de fin.");
+        }
+
+        int diasSolicitados = contarDiasHabiles(fechaInicio, fechaFin);
+        int diasDisponibles = getDiasVacacionesDisponibles();
+
+        // Contratistas: máximo 15 días, no pueden >20
+        if (diasSolicitados > 15) {
+            throw new PermisoDenegadoException(
+                    "Límite de 15 días excedido para contratista",
+                    fechaInicio,
+                    String.format("Solicitados: %d, Máximo permitido: 15", diasSolicitados));
+        }
+
+        if (diasSolicitados > diasDisponibles) {
+            throw new PermisoDenegadoException(
+                    "Días de vacaciones insuficientes",
+                    fechaInicio,
+                    String.format("Solicitados: %d, Disponibles: %d", diasSolicitados, diasDisponibles));
+        }
+
+        log.info("Vacaciones aprobadas para contratista {} {}: {} días hábiles (del {} al {})",
+                getNombre(), getApellido(), diasSolicitados, fechaInicio, fechaFin);
+        return true;
+    }
+
+    @Override
+    public boolean solicitarPermiso(LocalDate fecha, String motivo)
+            throws PermisoDenegadoException {
+        throw new PermisoDenegadoException("Permisos no aplicables", fecha,
+                "Los contratistas no tienen derecho a permisos remunerados.");
+    }
+
+    @Override
+    public int getDiasVacacionesDisponibles() {
+        int antiguedadAnios = java.time.Period.between(getFechaIngreso(), LocalDate.now()).getYears();
+        int dias = switch (antiguedadAnios) {
+            case 0 -> 0;
+            case 1, 2, 3, 4 -> 8;
+            default -> 15;
+        };
+        log.debug("Días vacaciones disponibles para contratista {} (antigüedad {} años): {}",
+                getNombre() + " " + getApellido(), antiguedadAnios, dias);
+        return dias;
+    }
+
+    @Override
+    public int getDiasPermisoUtilizadosEsteAnio() {
+        return 0; // Contratistas no tienen permisos
     }
 
     @Override
     public String obtenerInformacionCompleta() {
-        StringBuilder info = new StringBuilder(super.obtenerInformacionCompleta());
-        info.append(", Monto por Proyecto: ").append(montoPorProyecto);
-        info.append(", Proyectos Completados: ").append(proyectosCompletados);
-        info.append(", Fecha Fin Contrato: ").append(fechaFinContrato);
-        info.append(", Departamento: ").append(departamento);
-        return info.toString();
+        return String.format("Contratista: %s %s, Monto por Proyecto: %s, Proyectos Completados: %d, Fin Contrato: %s, Departamento: %s",
+                getNombre(), getApellido(), montoPorProyecto, proyectosCompletados, fechaFinContrato, departamento);
     }
 
-    public boolean contratoVigente() {
-        boolean vigente = fechaFinContrato != null && fechaFinContrato.isAfter(LocalDate.now());
-        log.debug("Contrato vigente para {} {}: {}", getNombre(), getApellido(), vigente);
-        return vigente;
+    /**
+     * Cuenta días hábiles (lunes a viernes) entre dos fechas.
+     */
+    public int contarDiasHabiles(LocalDate inicio, LocalDate fin) {
+        int count = 0;
+        LocalDate current = inicio;
+        while (!current.isAfter(fin)) {
+            if (current.getDayOfWeek().getValue() <= 5) {
+                count++;
+            }
+            current = current.plusDays(1);
+        }
+        return count;
     }
 }

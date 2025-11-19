@@ -14,7 +14,7 @@ import java.time.LocalDate;
 /**
  * Aplicación demo para probar las excepciones de Permisionable.
  * Ejecuta al iniciar la app y muestra ejemplos de vacaciones/permisos aprobados y denegados.
- */
+
 @SpringBootApplication(scanBasePackages = "py.edu.uc.lp32025")
 public class PermisoDemoApplication {
 
@@ -94,4 +94,4 @@ public class PermisoDemoApplication {
         System.out.println("   Detalle: " + e.getDetalleNormativa());
         System.out.println();
     }
-}
+} */

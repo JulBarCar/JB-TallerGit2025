@@ -1,19 +1,12 @@
 package py.edu.uc.lp32025.interfaces;
 
 import java.time.LocalDate;
+import py.edu.uc.lp32025.exception.DiasInsuficientesException;
 import py.edu.uc.lp32025.exception.PermisoDenegadoException;
 
 /**
  * Interfaz que define el comportamiento para solicitar vacaciones o días de permiso
  * conforme a la legislación laboral de Paraguay (Código del Trabajo, Ley 729/61 y modificatorias).
- *
- * <p>Requisitos legales básicos (simplificados):</p>
- * <ul>
- *   <li>Vacaciones: 12 días hábiles continuos después de 1 año de servicio,
- *       18 días después de 5 años, 30 días después de 10 años.</li>
- *   <li>Días de permiso: justificados (matrimonio, nacimiento, fallecimiento, etc.)
- *       con tope según convenio.</li>
- * </ul>
  */
 public interface Permisionable {
 
@@ -24,19 +17,18 @@ public interface Permisionable {
      * @param fechaFin    fecha de fin de las vacaciones (inclusive)
      * @return true si las vacaciones fueron concedidas
      * @throws PermisoDenegadoException si no cumple con los requisitos legales
-     *                                  o el saldo de días es insuficiente
+     * @throws DiasInsuficientesException si no hay suficientes días disponibles o se excede límite
      */
     boolean solicitarVacaciones(LocalDate fechaInicio, LocalDate fechaFin)
-            throws PermisoDenegadoException;
+            throws PermisoDenegadoException, DiasInsuficientesException;
 
     /**
      * Solicita un día de permiso por motivo específico.
      *
      * @param fecha   fecha del permiso
-     * @param motivo  motivo del permiso (ej. "MATRIMONIO", "NACIMIENTO_HIJO", "FALLECIMIENTO_FAMILIAR")
+     * @param motivo  motivo del permiso
      * @return true si el permiso fue concedido
-     * @throws PermisoDenegadoException si el motivo no está contemplado,
-     *                                  supera el límite anual o no cumple antigüedad
+     * @throws PermisoDenegadoException si el motivo no está contemplado o no cumple antigüedad
      */
     boolean solicitarPermiso(LocalDate fecha, String motivo)
             throws PermisoDenegadoException;
@@ -54,4 +46,20 @@ public interface Permisionable {
      * @return cantidad de días de permiso consumidos
      */
     int getDiasPermisoUtilizadosEsteAnio();
+
+    /**
+     * <strong>Método exclusivo para gerentes:</strong> Aprueba o rechaza una solicitud
+     * de permiso realizada por un subordinado.
+     *
+     * @param empleadoId   ID del empleado que solicita el permiso
+     * @param fecha        fecha del permiso solicitado
+     * @param motivo       motivo del permiso
+     * @param aprobar      true para aprobar, false para rechazar
+     * @return true si la operación fue registrada con éxito
+     * @throws PermisoDenegadoException si el gerente no tiene autoridad o el motivo no es válido
+     */
+    default boolean aprobarPermisoDeSubordinado(Long empleadoId, LocalDate fecha, String motivo, boolean aprobar)
+            throws PermisoDenegadoException {
+        throw new UnsupportedOperationException("Solo gerentes pueden aprobar permisos de subordinados.");
+    }
 }

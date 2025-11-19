@@ -4,8 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import py.edu.uc.lp32025.util.MapeableFactory;
-import py.edu.uc.lp32025.util.MapeableUtils;
+import py.edu.uc.lp32025.utils.MapeableFactory;
+import py.edu.uc.lp32025.utils.MapeableUtils;
 
 @SpringBootApplication
 public class DemoMapeableApplication {

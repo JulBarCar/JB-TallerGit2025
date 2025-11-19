@@ -1,4 +1,4 @@
-package py.edu.uc.lp32025.util;
+package py.edu.uc.lp32025.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
