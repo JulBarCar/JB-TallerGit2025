@@ -29,6 +29,27 @@ public class PersonaController {
     }
 
     // NUEVO ENDPOINT CON MAPPER
+    /*@GetMapping("/reporte/{id}")
+    public ResponseEntity<ReporteEmpleadoDto> getReporte(@PathVariable Long id) {
+        Persona persona = personaService.getPersonaById(id);
+
+        if (persona instanceof Empleado empleado) {
+            return ResponseEntity.ok(empleadoMapper.toReporteDto(empleado));
+        }
+
+        // Si es Persona genérica (no empleado)
+        String info = persona.getNombre() + " " + persona.getApellido() +
+                " | Doc: " + persona.getNumeroDocumento();
+
+        ReporteEmpleadoDto dto = new ReporteEmpleadoDto(
+                "Persona",
+                info,
+                BigDecimal.ZERO,
+                BigDecimal.ZERO,
+                true
+        );
+        return ResponseEntity.ok(dto);
+    }*/
     @GetMapping("/reporte/{id}")
     public ResponseEntity<ReporteEmpleadoDto> getReporte(@PathVariable Long id) {
         Persona persona = personaService.getPersonaById(id);
@@ -42,6 +63,7 @@ public class PersonaController {
                 " | Doc: " + persona.getNumeroDocumento();
 
         ReporteEmpleadoDto dto = new ReporteEmpleadoDto(
+                persona.getId(),           // ← AQUÍ ESTABA EL ERROR
                 "Persona",
                 info,
                 BigDecimal.ZERO,

@@ -9,7 +9,7 @@ public class GerenteMapper extends EmpleadoMapper {
 
     // NO usamos @Override porque NO es un override real
     // Es un método NUEVO específico para Gerente
-    public ReporteEmpleadoDto toReporteDto(Gerente gerente) {
+    /*public ReporteEmpleadoDto toReporteDto(Gerente gerente) {
         ReporteEmpleadoDto base = super.toReporteDto(gerente); // aquí el cast implícito es seguro
 
         String infoCompleta = base.informacionCompleta() +
@@ -17,6 +17,24 @@ public class GerenteMapper extends EmpleadoMapper {
                 " | Gestiona: " + gerente.getDepartamentoGestionado();
 
         return new ReporteEmpleadoDto(
+                "Gerente",
+                infoCompleta,
+                base.salario(),
+                base.impuestoNeto(),
+                base.datosValidos()
+        );
+    }*/
+    public ReporteEmpleadoDto toReporteDto(Gerente gerente) {
+        if (gerente == null) return null;
+
+        ReporteEmpleadoDto base = super.toReporteDto(gerente);
+
+        String infoCompleta = base.informacionCompleta() +
+                " | Nivel: " + gerente.getNivelJerarquico() +
+                " | Gestiona: " + gerente.getDepartamentoGestionado();
+
+        return new ReporteEmpleadoDto(
+                gerente.getId(),                    // ← AHORA SÍ INCLUYE EL ID
                 "Gerente",
                 infoCompleta,
                 base.salario(),

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import py.edu.uc.lp32025.domain.EmpleadoPorHora;
 import py.edu.uc.lp32025.repository.EmpleadoPorHorasRepository;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -138,7 +139,31 @@ public class EmpleadoPorHorasService {
     // VALIDACIÓN (polimorfismo + general)
     // ========================================
 
+
     private void validateEmpleado(EmpleadoPorHora empleado) {
+        if (empleado == null) {
+            throw new IllegalArgumentException("El empleado no puede ser nulo.");
+        }
+
+        if (isEmpty(empleado.getNombre()) || isEmpty(empleado.getApellido()) || isEmpty(empleado.getNumeroDocumento())) {
+            throw new IllegalArgumentException("Nombre, apellido y documento son obligatorios.");
+        }
+
+        // VALIDACIÓN TEMPORAL MÁS REALISTA (hasta 300 horas mensuales)
+        if (empleado.getTarifaPorHora() == null || empleado.getTarifaPorHora().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("La tarifa por hora debe ser mayor a 0.");
+        }
+        if (empleado.getHorasTrabajadas() < 1 || empleado.getHorasTrabajadas() > 300) {
+            throw new IllegalArgumentException("Las horas trabajadas deben estar entre 1 y 300.");
+        }
+
+        if (isEmpty(empleado.getDepartamento())) {
+            throw new IllegalArgumentException("El departamento es obligatorio.");
+        }
+
+        logger.debug("Empleado por horas válido: {} {}", empleado.getNombre(), empleado.getApellido());
+    }
+    /*private void validateEmpleado(EmpleadoPorHora empleado) {
         if (empleado == null) {
             logger.error("El empleado no puede ser nulo.");
             throw new IllegalArgumentException("El empleado no puede ser nulo.");
@@ -163,7 +188,7 @@ public class EmpleadoPorHorasService {
         }
 
         logger.debug("Empleado por horas válido: {} {}", empleado.getNombre(), empleado.getApellido());
-    }
+    }*/
 
     private boolean isEmpty(String str) {
         return str == null || str.trim().isEmpty();

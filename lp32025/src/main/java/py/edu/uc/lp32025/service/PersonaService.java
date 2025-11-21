@@ -89,11 +89,25 @@ public class PersonaService {
      * Recorre todas las personas, llama a métodos polimórficos
      * y devuelve una lista de DTOs con la información completa.
      */
+    /*public List<ReporteEmpleadoDto> generarReporteCompleto() {
+        List<Persona> todas = personaRepository.findAll();
+
+        return todas.stream()
+                .map(p -> new ReporteEmpleadoDto(
+                        p.getClass().getSimpleName(),
+                        p.obtenerInformacionCompleta(),
+                        p.calcularSalario(),
+                        p.calcularImpuestos(),
+                        p.validarDatosEspecificos()
+                ))
+                .collect(Collectors.toList());
+    }*/
     public List<ReporteEmpleadoDto> generarReporteCompleto() {
         List<Persona> todas = personaRepository.findAll();
 
         return todas.stream()
                 .map(p -> new ReporteEmpleadoDto(
+                        p.getId(),                                      // ← ahora pasamos el ID
                         p.getClass().getSimpleName(),
                         p.obtenerInformacionCompleta(),
                         p.calcularSalario(),

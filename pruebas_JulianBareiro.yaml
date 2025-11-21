@@ -1,0 +1,439 @@
+type: collection.insomnia.rest/5.0
+name: Entrege Final
+meta:
+  id: wrk_9c953a9147a0454daa90c028d3714200
+  created: 1763727089534
+  modified: 1763727089534
+  description: ""
+collection:
+  - url: http://localhost:8080/api/gerentes/batch
+    name: Crear Gerentes en lote
+    meta:
+      id: req_0eac02fd8012443391cfb7492f32658b
+      created: 1763727112599
+      modified: 1763728154127
+      isPrivate: false
+      description: ""
+      sortKey: -1763727112599
+    method: POST
+    body:
+      text: '[     {       "nombre": "Verónica",       "apellido":
+        "Ramírez",       "numeroDocumento": "1000001",       "fechaNacimiento":
+        "1975-12-03",       "fechaIngreso":
+        "2010-03-01",       "salarioMensual": 18000000,       "bonoAnual":
+        6000000,       "departamento": "Dirección
+        General",       "nivelJerarquico": 3,       "departamentoGestionado":
+        "Toda la empresa"     },     {       "nombre":
+        "Federico",       "apellido": "Morales",       "numeroDocumento":
+        "1000002",       "fechaNacimiento": "1980-08-18",       "fechaIngreso":
+        "2015-07-10",       "salarioMensual": 14000000,       "bonoAnual":
+        4000000,       "departamento": "Tecnología",       "nivelJerarquico":
+        2,       "departamentoGestionado": "Sistemas"     }   ]'
+      mimeType: application/json
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados-tiempo-completo/batch
+    name: Crear empleados de tiempo completo en lote
+    meta:
+      id: req_92ef8c88f31d40b4a9faee4a2cb2e4e1
+      created: 1763727167498
+      modified: 1763730245063
+      isPrivate: false
+      description: ""
+      sortKey: -1763727167498
+    method: POST
+    body:
+      text: '[     {       "nombre": "Romina",       "apellido":
+        "Acosta",       "numeroDocumento": "3000001",       "fechaNacimiento":
+        "1988-02-28",       "fechaIngreso":
+        "2019-06-01",       "salarioMensual": 6500000,       "bonoAnual":
+        1200000,       "departamento": "Recursos
+        Humanos"     },     {       "nombre": "Gabriel",       "apellido":
+        "Ortiz",       "numeroDocumento": "3000002",       "fechaNacimiento":
+        "1985-09-14",       "fechaIngreso":
+        "2018-11-20",       "salarioMensual": 7200000,       "bonoAnual":
+        1800000,       "departamento": "Finanzas"     }   ]'
+      mimeType: application/json
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/contratistas/batch
+    name: Crear Contratistas en lote
+    meta:
+      id: req_ab0bc0ecc3c143788195f40eab2ef34c
+      created: 1763727210322
+      modified: 1763728171010
+      isPrivate: false
+      description: ""
+      sortKey: -1763727210322
+    method: POST
+    body:
+      text: '[     {       "nombre": "Consultora",       "apellido": "Externa
+        SA",       "numeroDocumento": "8000001",       "fechaNacimiento":
+        "2000-01-01",       "fechaIngreso":
+        "2025-01-01",       "montoPorProyecto":
+        3500000,       "proyectosCompletados": 12,       "fechaFinContrato":
+        "2025-12-31",       "departamento":
+        "Auditoría"     },     {       "nombre": "Freelancer",       "apellido":
+        "DevOps",       "numeroDocumento": "8000002",       "fechaNacimiento":
+        "1990-05-05",       "fechaIngreso":
+        "2025-02-15",       "montoPorProyecto":
+        5000000,       "proyectosCompletados": 5,       "fechaFinContrato":
+        "2025-08-30",       "departamento": "Infraestructura"     }   ]'
+      mimeType: application/json
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados-por-hora
+    name: Crear empleado por hora
+    meta:
+      id: req_9c7cde49ae274d03be9a07c5a4a9fdcd
+      created: 1763727439926
+      modified: 1763728114832
+      isPrivate: false
+      description: ""
+      sortKey: -1763727439926
+    method: POST
+    body:
+      mimeType: application/json
+      text: '{     "nombre": "Pedro",     "apellido":
+        "Martínez",     "numeroDocumento": "4444444",     "fechaNacimiento":
+        "1995-11-05",     "fechaIngreso": "2023-07-15",     "tarifaPorHora":
+        85000,     "horasTrabajadas": 30,     "departamento": "Soporte"   }'
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados-por-hora/batch
+    name: Crear empleados por hora en lote
+    meta:
+      id: req_ba49b2be38c24acfa131473c345880c7
+      created: 1763728103385
+      modified: 1763728145262
+      isPrivate: false
+      description: ""
+      sortKey: -1763728103385
+    method: POST
+    body:
+      text: '[     {       "nombre": "Luis",       "apellido":
+        "Fernández",       "numeroDocumento":
+        "6000001",       "fechaNacimiento": "1998-04-12",       "fechaIngreso":
+        "2024-01-15",       "tarifaPorHora": 92000,       "horasTrabajadas":
+        75,       "departamento": "Soporte Técnico"     },     {       "nombre":
+        "Carla",       "apellido": "Benítez",       "numeroDocumento":
+        "6000002",       "fechaNacimiento": "1996-11-30",       "fechaIngreso":
+        "2023-09-01",       "tarifaPorHora": 85000,       "horasTrabajadas":
+        68,       "departamento": "Atención al Cliente"     }   ]'
+      mimeType: application/json
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/reportes/empleados/completo
+    name: Lista completa de empleados
+    meta:
+      id: req_14106f3bcae64f09a0734a8837f5a514
+      created: 1763728378890
+      modified: 1763730246834
+      isPrivate: false
+      description: ""
+      sortKey: -1763728378890
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/gerentes
+    name: Lista gerentes
+    meta:
+      id: req_625795f9e0cc4cada80706c5de9129bb
+      created: 1763728698676
+      modified: 1763728781080
+      isPrivate: false
+      description: ""
+      sortKey: -1763728698676
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados-tiempo-completo
+    name: Lista empleados de tiempo completo
+    meta:
+      id: req_467f1abffa454816ad5e84a29eb63905
+      created: 1763728770374
+      modified: 1763728859382
+      isPrivate: false
+      description: ""
+      sortKey: -1763728770374
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados-por-hora
+    name: Lista empleados por hora
+    meta:
+      id: req_62a82f95bab24d2488de411f8064cf41
+      created: 1763728836299
+      modified: 1763728854451
+      isPrivate: false
+      description: ""
+      sortKey: -1763728836299
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/contratistas
+    name: Lista contratistas
+    meta:
+      id: req_d4b7db968f9648a292646fb2cc1283e5
+      created: 1763728871499
+      modified: 1763728886382
+      isPrivate: false
+      description: ""
+      sortKey: -1763728871499
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/contratistas/contrato-vigente
+    name: Lista contratistas con contrato vigente
+    meta:
+      id: req_8f93044b54ba4579a9def4f1203d3be9
+      created: 1763728897839
+      modified: 1763728916421
+      isPrivate: false
+      description: ""
+      sortKey: -1763728897839
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/permisos/empleados/1/vacaciones/solicitar
+    name: Solicitar vacaciones (empleado ID=1)
+    meta:
+      id: req_a3083f6c90424558b700baa54f34dd9c
+      created: 1763728932554
+      modified: 1763728951831
+      isPrivate: false
+      description: ""
+      sortKey: -1763728932554
+    method: POST
+    body:
+      text: '{     "fechaInicio": "2025-12-20",     "fechaFin": "2025-12-30"   }'
+      mimeType: application/json
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/permisos/empleados/1/permisos/solicitar
+    name: Solicitar permiso por matrimonio (3 días)
+    meta:
+      id: req_58c40b22a35f43f38688449f183f7079
+      created: 1763728964518
+      modified: 1763728981234
+      isPrivate: false
+      description: ""
+      sortKey: -1763728964518
+    method: POST
+    body:
+      text: '{     "fecha": "2025-08-15",     "motivo": "MATRIMONIO"   }'
+      mimeType: application/json
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/gerentes/2/aprobar-permiso/5
+    name: Gerente aprueba/rechaza permiso
+    meta:
+      id: req_ac2702c037de46f283b626e016e328cc
+      created: 1763729000443
+      modified: 1763729035396
+      isPrivate: false
+      description: ""
+      sortKey: -1763729000443
+    method: PUT
+    body:
+      text: '{     "fecha": "2025-09-10",     "motivo": "NACIMIENTO_HIJO"   }'
+      mimeType: application/json
+    parameters:
+      - name: aprobar
+        value: "true"
+        disabled: false
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados/1/vacaciones/disponibles
+    name: Días de vacaciones disponibles (cualquier tipo de empleado)
+    meta:
+      id: req_8549bc50d32f4379990fd7e101bdca2e
+      created: 1763729061526
+      modified: 1763729090182
+      isPrivate: false
+      description: ""
+      sortKey: -1763729061526
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/personas/reporte/1
+    name: Reporte individual con DTO bonito
+    meta:
+      id: req_55d9c9668a204006b9c15e598a98a828
+      created: 1763729106605
+      modified: 1763730219041
+      isPrivate: false
+      description: ""
+      sortKey: -1763729106605
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/empleados-por-hora/5/impuestos
+    name: Impuestos de un empleado por hora
+    meta:
+      id: req_1b3e914b4e714bad821506605a2d8c49
+      created: 1763729137544
+      modified: 1763730256804
+      isPrivate: false
+      description: ""
+      sortKey: -1763729137544
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:8080/api/contratistas/3/impuestos
+    name: "# Impuestos de un contratista (ID = 3, cambiar según tu BD)"
+    meta:
+      id: req_482ee3fa01194fb0bf1cb0dc1130e65d
+      created: 1763729181107
+      modified: 1763730254173
+      isPrivate: false
+      description: ""
+      sortKey: -1763729181107
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_1ef84b55f7e57c1e65e7ce13c21172a2e4dac7f6
+    created: 1763727089544
+    modified: 1763727089544
+environments:
+  name: Base Environment
+  meta:
+    id: env_1ef84b55f7e57c1e65e7ce13c21172a2e4dac7f6
+    created: 1763727089540
+    modified: 1763727089540
+    isPrivate: false

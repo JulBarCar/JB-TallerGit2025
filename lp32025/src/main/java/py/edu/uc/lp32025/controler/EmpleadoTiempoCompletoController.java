@@ -104,4 +104,6 @@ public class EmpleadoTiempoCompletoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    
 }

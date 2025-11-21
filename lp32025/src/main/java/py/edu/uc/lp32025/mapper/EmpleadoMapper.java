@@ -18,7 +18,7 @@ public class EmpleadoMapper extends BaseMapper<Empleado, ReporteEmpleadoDto> {
     @Override
     protected void copyDtoToEntity(ReporteEmpleadoDto dto, Empleado entity) {}
 
-    public ReporteEmpleadoDto toReporteDto(Empleado empleado) {
+    /*public ReporteEmpleadoDto toReporteDto(Empleado empleado) {
         if (empleado == null) return null;
 
         String tipo = empleado.getClass().getSimpleName();
@@ -30,6 +30,25 @@ public class EmpleadoMapper extends BaseMapper<Empleado, ReporteEmpleadoDto> {
                 (departamento != null ? " | Depto: " + departamento : "");
 
         return new ReporteEmpleadoDto(tipo, info, salario, BigDecimal.ZERO, true);
+    }*/
+    public ReporteEmpleadoDto toReporteDto(Empleado empleado) {
+        if (empleado == null) return null;
+
+        String tipo = empleado.getClass().getSimpleName();
+        String departamento = obtenerDepartamento(empleado);
+
+        String info = empleado.getNombre() + " " + empleado.getApellido() +
+                " | Doc: " + empleado.getNumeroDocumento() +
+                (departamento != null ? " | Depto: " + departamento : "");
+
+        return new ReporteEmpleadoDto(
+                empleado.getId(),                    // AQUÍ ESTABA EL ERROR: faltaba el ID
+                tipo,
+                info,
+                empleado.calcularSalario(),          // mejor: usamos el método polimórfico real
+                empleado.calcularImpuestos(),        // ahora sí muestra el impuesto neto real
+                empleado.validarDatosEspecificos()
+        );
     }
 
     private String obtenerDepartamento(Empleado e) {

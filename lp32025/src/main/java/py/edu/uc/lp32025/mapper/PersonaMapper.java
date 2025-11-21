@@ -23,6 +23,7 @@ public class PersonaMapper extends BaseMapper<Persona, ReporteEmpleadoDto> {
                 " | Doc: " + persona.getNumeroDocumento();
 
         return new ReporteEmpleadoDto(
+                persona.getId(),
                 "Persona",
                 info,
                 BigDecimal.ZERO,
